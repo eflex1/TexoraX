@@ -1,0 +1,74 @@
+{
+  "name": "Budget",
+  "type": "object",
+  "properties": {
+    "programme_id": {
+      "type": "string",
+      "description": "Associated programme"
+    },
+    "programme_name": {
+      "type": "string",
+      "description": "Programme name for display"
+    },
+    "fiscal_year": {
+      "type": "string",
+      "description": "Fiscal year e.g. 2024"
+    },
+    "total_budget": {
+      "type": "number",
+      "description": "Total approved budget"
+    },
+    "currency": {
+      "type": "string",
+      "default": "NGN"
+    },
+    "categories": {
+      "type": "array",
+      "description": "Budget line items / categories",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "allocated": {
+            "type": "number"
+          },
+          "spent": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "approved",
+        "active",
+        "closed"
+      ],
+      "default": "draft"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "approved_by": {
+      "type": "string"
+    },
+    "approved_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "programme_id",
+    "total_budget"
+  ]
+}

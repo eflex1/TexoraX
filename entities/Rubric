@@ -1,0 +1,69 @@
+{
+  "name": "Rubric",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Rubric name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Rubric description"
+    },
+    "programme_id": {
+      "type": "string",
+      "description": "Associated programme"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "screening",
+        "panel_review",
+        "due_diligence",
+        "final_decision",
+        "all"
+      ],
+      "default": "all"
+    },
+    "criteria": {
+      "type": "array",
+      "description": "Evaluation criteria",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "max_score": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "scoring_scale": {
+      "type": "string",
+      "enum": [
+        "1-5",
+        "1-10",
+        "custom"
+      ],
+      "default": "1-5"
+    },
+    "blind_review": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

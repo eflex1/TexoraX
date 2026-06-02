@@ -1,0 +1,46 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string",
+      "description": "Channel or conversation ID"
+    },
+    "channel_type": {
+      "type": "string",
+      "enum": [
+        "direct",
+        "programme",
+        "team_chat"
+      ],
+      "description": "Type of channel"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "programme_id": {
+      "type": "string"
+    },
+    "application_id": {
+      "type": "string"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "For direct messages"
+    }
+  },
+  "required": [
+    "sender_email",
+    "content"
+  ]
+}

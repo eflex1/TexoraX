@@ -1,0 +1,113 @@
+{
+  "name": "Alumni",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "organization_name": {
+      "type": "string"
+    },
+    "programme_id": {
+      "type": "string"
+    },
+    "programme_name": {
+      "type": "string"
+    },
+    "cohort": {
+      "type": "string"
+    },
+    "graduation_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "funded_amount": {
+      "type": "number"
+    },
+    "current_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "exited"
+      ],
+      "default": "active"
+    },
+    "post_programme_revenue": {
+      "type": "number"
+    },
+    "jobs_created": {
+      "type": "number"
+    },
+    "funding_raised": {
+      "type": "number"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "male",
+        "female",
+        "other",
+        "prefer_not_to_say"
+      ]
+    },
+    "age": {
+      "type": "number",
+      "description": "Age of the primary contact / founder"
+    },
+    "location": {
+      "type": "string",
+      "description": "City, Country"
+    },
+    "sector": {
+      "type": "string"
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed"
+            ]
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "mentor_name": {
+      "type": "string"
+    },
+    "mentor_email": {
+      "type": "string"
+    },
+    "success_story": {
+      "type": "string"
+    },
+    "kpis": {
+      "type": "object",
+      "description": "Key performance indicators"
+    }
+  },
+  "required": [
+    "name",
+    "email"
+  ]
+}

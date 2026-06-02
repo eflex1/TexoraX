@@ -1,0 +1,151 @@
+{
+  "name": "Application",
+  "type": "object",
+  "properties": {
+    "programme_id": {
+      "type": "string",
+      "description": "Associated programme ID"
+    },
+    "programme_name": {
+      "type": "string",
+      "description": "Programme name for display"
+    },
+    "applicant_email": {
+      "type": "string",
+      "description": "Primary applicant email"
+    },
+    "applicant_name": {
+      "type": "string",
+      "description": "Primary applicant name"
+    },
+    "organization_name": {
+      "type": "string",
+      "description": "Applicant organization"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "under_review",
+        "shortlisted",
+        "approved",
+        "rejected",
+        "waitlisted",
+        "withdrawn"
+      ],
+      "default": "draft",
+      "description": "Application status"
+    },
+    "current_stage": {
+      "type": "string",
+      "enum": [
+        "screening",
+        "panel_review",
+        "due_diligence",
+        "final_decision",
+        "completed"
+      ],
+      "default": "screening",
+      "description": "Current review stage"
+    },
+    "form_data": {
+      "type": "object",
+      "description": "Submitted form field values"
+    },
+    "completion_percentage": {
+      "type": "number",
+      "default": 0,
+      "description": "Form completion percentage"
+    },
+    "team_members": {
+      "type": "array",
+      "description": "Team members on the application",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "editor",
+              "viewer"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "pending"
+            ]
+          }
+        }
+      }
+    },
+    "assigned_reviewers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Assigned reviewer emails"
+    },
+    "scores": {
+      "type": "object",
+      "description": "Aggregated scores by stage"
+    },
+    "final_score": {
+      "type": "number",
+      "description": "Final weighted score"
+    },
+    "sector": {
+      "type": "string",
+      "description": "Business sector"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "male",
+        "female",
+        "other",
+        "prefer_not_to_say"
+      ],
+      "description": "Lead applicant gender"
+    },
+    "submission_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Submission timestamp"
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "is_duplicate": {
+      "type": "boolean",
+      "default": false
+    },
+    "duplicate_of": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "programme_id",
+    "applicant_email"
+  ]
+}

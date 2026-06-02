@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: "Plus Jakarta Sans", sans-serif;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 15%;
+    --primary: 258 80% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 258 30% 96%;
+    --secondary-foreground: 258 60% 35%;
+    --muted: 240 10% 96%;
+    --muted-foreground: 240 5% 52%;
+    --accent: 258 80% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 10% 92%;
+    --input: 240 10% 92%;
+    --ring: 258 80% 55%;
+    --chart-1: 222 47% 19%;
+    --chart-2: 160 100% 33%;
+    --chart-3: 36 90% 55%;
+    --chart-4: 270 50% 55%;
+    --chart-5: 200 80% 55%;
+    --radius: 0.625rem;
+    --success: 160 100% 33%;
+    --success-foreground: 0 0% 100%;
+    --sidebar-background: 258 50% 18%;
+    --sidebar-foreground: 258 20% 90%;
+    --sidebar-primary: 258 80% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 258 40% 25%;
+    --sidebar-accent-foreground: 258 20% 95%;
+    --sidebar-border: 258 30% 28%;
+    --sidebar-ring: 258 80% 65%;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 220 20% 95%;
+    --card: 222 40% 12%;
+    --card-foreground: 220 20% 95%;
+    --popover: 222 40% 12%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 36 90% 55%;
+    --primary-foreground: 222 47% 17%;
+    --secondary: 222 35% 18%;
+    --secondary-foreground: 220 20% 95%;
+    --muted: 222 35% 18%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 36 90% 55%;
+    --accent-foreground: 222 47% 17%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 30% 20%;
+    --input: 222 30% 20%;
+    --ring: 36 90% 55%;
+    --chart-1: 36 90% 55%;
+    --chart-2: 160 100% 40%;
+    --chart-3: 222 47% 50%;
+    --chart-4: 270 50% 60%;
+    --chart-5: 200 80% 60%;
+    --success: 160 100% 33%;
+    --success-foreground: 0 0% 100%;
+    --sidebar-background: 222 47% 10%;
+    --sidebar-foreground: 220 20% 90%;
+    --sidebar-primary: 36 90% 55%;
+    --sidebar-primary-foreground: 222 47% 8%;
+    --sidebar-accent: 222 40% 18%;
+    --sidebar-accent-foreground: 220 20% 95%;
+    --sidebar-border: 222 35% 18%;
+    --sidebar-ring: 36 90% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+}

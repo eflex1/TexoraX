@@ -1,0 +1,70 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Subscriber email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Subscriber name"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "growth",
+        "enterprise"
+      ],
+      "description": "Subscription plan"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "trialing",
+        "past_due",
+        "cancelled",
+        "paused"
+      ],
+      "default": "active",
+      "description": "Subscription status"
+    },
+    "billing_cycle": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "annual"
+      ],
+      "default": "monthly"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Billing amount"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "renewal_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "cancelled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_email",
+    "plan"
+  ]
+}

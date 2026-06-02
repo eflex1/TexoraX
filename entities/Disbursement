@@ -1,0 +1,63 @@
+{
+  "name": "Disbursement",
+  "type": "object",
+  "properties": {
+    "programme_id": {
+      "type": "string",
+      "description": "Associated programme"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Associated application/participant"
+    },
+    "recipient_name": {
+      "type": "string"
+    },
+    "recipient_email": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Disbursement amount"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "pending",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "milestone_id": {
+      "type": "string"
+    },
+    "milestone_name": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "documentation_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "programme_id",
+    "amount"
+  ]
+}

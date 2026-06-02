@@ -1,0 +1,185 @@
+{
+  "name": "Programme",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Programme name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Programme description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "accelerator",
+        "incubator",
+        "grant",
+        "fellowship",
+        "bootcamp",
+        "other"
+      ],
+      "description": "Programme category"
+    },
+    "objectives": {
+      "type": "string",
+      "description": "Programme objectives"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "planning",
+        "application",
+        "selection",
+        "implementation",
+        "completion",
+        "archived"
+      ],
+      "default": "draft",
+      "description": "Programme lifecycle phase"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Programme start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Programme end date"
+    },
+    "application_deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Application deadline"
+    },
+    "total_budget": {
+      "type": "number",
+      "description": "Total programme budget"
+    },
+    "max_participants": {
+      "type": "number",
+      "description": "Maximum number of participants"
+    },
+    "eligibility_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of eligibility criteria"
+    },
+    "form_fields": {
+      "type": "array",
+      "description": "Application form field definitions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "section": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "review_stages": {
+      "type": "array",
+      "description": "Review stage configuration",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rubric_id": {
+            "type": "string"
+          },
+          "min_score": {
+            "type": "number"
+          },
+          "reviewer_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blind_review": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "blind_review_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether blind review is enabled"
+    },
+    "sdg_alignments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SDG alignment tags"
+    },
+    "esg_metrics": {
+      "type": "object",
+      "description": "ESG diversity parameters"
+    },
+    "documents": {
+      "type": "array",
+      "description": "Programme-related documents",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "donor_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of funding donors"
+    },
+    "organization": {
+      "type": "string",
+      "description": "Organization managing the programme"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

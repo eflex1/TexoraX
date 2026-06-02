@@ -1,0 +1,104 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "application_id": {
+      "type": "string",
+      "description": "Application being reviewed"
+    },
+    "programme_id": {
+      "type": "string",
+      "description": "Programme ID"
+    },
+    "reviewer_email": {
+      "type": "string",
+      "description": "Reviewer email"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "screening",
+        "panel_review",
+        "due_diligence",
+        "final_decision"
+      ],
+      "description": "Review stage"
+    },
+    "rubric_id": {
+      "type": "string",
+      "description": "Rubric used for scoring"
+    },
+    "scores": {
+      "type": "array",
+      "description": "Individual criterion scores",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion_id": {
+            "type": "string"
+          },
+          "criterion_name": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "max_score": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "feedback": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "total_score": {
+      "type": "number",
+      "description": "Weighted total score"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Overall feedback"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approve",
+        "reject",
+        "waitlist",
+        "request_info"
+      ],
+      "default": "pending"
+    },
+    "coi_flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "Conflict of interest flagged"
+    },
+    "coi_reason": {
+      "type": "string"
+    },
+    "is_blind": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "assigned",
+        "in_progress",
+        "completed"
+      ],
+      "default": "assigned"
+    }
+  },
+  "required": [
+    "application_id",
+    "reviewer_email",
+    "stage"
+  ]
+}

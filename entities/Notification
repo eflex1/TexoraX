@@ -1,0 +1,50 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Recipient user email"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "new_application",
+        "status_change",
+        "new_message",
+        "milestone_due",
+        "disbursement_scheduled",
+        "new_user_joined",
+        "coi_escalation",
+        "monthly_report",
+        "team_activity",
+        "chat_message",
+        "review_assigned",
+        "comment_mention"
+      ],
+      "description": "Notification type"
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "link": {
+      "type": "string",
+      "description": "Navigation link"
+    },
+    "related_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_email",
+    "type",
+    "title"
+  ]
+}
