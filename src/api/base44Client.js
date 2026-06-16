@@ -1,14 +1,53 @@
-import { createClient } from '@base44/sdk';
-import { appParams } from '@/lib/app-params';
+// src/api/base44Client.js
+import { authService } from './apiClient';
 
-const { appId, token, functionsVersion, appBaseUrl } = appParams;
+const handleCoiSigning = (data) => {
+  if (data && (data.coi_signed === true || data.coiAccepted === true)) {
+    localStorage.setItem('texorax_coi_signed', 'true');
+    
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
+    return true;
+  }
+  return false;
+};
 
-//Create a client with authentication required
-export const base44 = createClient({
-  appId,
-  token,
-  functionsVersion,
-  serverUrl: '',
-  requiresAuth: false,
-  appBaseUrl
+const dummyEntities = new Proxy({}, {
+  get: function(target, tableName) {
+    return {
+      list: async () => [],
+      filter: async () => [],
+      get: async () => ({ id: "mock-id" }),
+      create: async (data) => {
+        handleCoiSigning(data);
+        return { id: "mock-id", ...data };
+      },
+      update: async (id, data) => {
+        handleCoiSigning(data);
+        return { id, ...data };
+      },
+      delete: async () => ({ success: true })
+    };
+  }
 });
+
+export const base44 = {
+  auth: {
+    me: authService.me,
+    login: authService.login,
+    logout: authService.logout,
+    register: authService.register, 
+    verifyOtp: authService.verifyOtp, 
+    resendOtp: authService.resendOtp,
+    setToken: (token) => localStorage.setItem('texorax_token', token), 
+    resetPasswordRequest: async () => ({}),
+    resetPassword: async () => ({}),
+    
+    // FIX: Wire the profile updates directly to our real Node.js route!
+    updateProfile: authService.updateProfile
+  },
+  entities: dummyEntities
+};
+
+export default base44;

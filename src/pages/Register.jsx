@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,20 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  
+  // NEW: State to track the 60-second spam cooldown
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // NEW: The ticking clock engine!
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,10 +42,15 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const queryParams = new URLSearchParams(window.location.search);
+      const selectedRole = queryParams.get('role') || 'applicant'; 
+
+      await base44.auth.register({ email, password, role: selectedRole });
       setShowOtp(true);
+      setResendCooldown(60); // Start the 60s cooldown when they first register!
     } catch (err) {
-      setError(err.message || "Registration failed");
+      const actualErrorMessage = err.response?.data?.message || err.message || "Registration failed";
+      setError(actualErrorMessage);
     } finally {
       setLoading(false);
     }
@@ -47,7 +66,8 @@ export default function Register() {
       }
       window.location.href = "/";
     } catch (err) {
-      setError(err.message || "Invalid verification code");
+      const actualErrorMessage = err.response?.data?.message || err.message || "Invalid verification code";
+      setError(actualErrorMessage);
     } finally {
       setLoading(false);
     }
@@ -61,8 +81,10 @@ export default function Register() {
         title: "Code sent",
         description: "Check your email for the new code.",
       });
+      setResendCooldown(60); // Reset the 60s cooldown when they successfully resend!
     } catch (err) {
-      setError(err.message || "Failed to resend code");
+      const actualErrorMessage = err.response?.data?.message || err.message || "Failed to resend code";
+      setError(actualErrorMessage);
     }
   };
 
@@ -77,8 +99,13 @@ export default function Register() {
         title="Verify your email"
         subtitle={`We sent a code to ${email}`}
       >
+        {/*Spam Warning Box */}
+        <div className="bg-amber-50 text-amber-600 text-xs p-3 rounded-md mb-4 text-center border border-amber-200">
+          <span className="font-semibold">Note:</span> If you don't see the email within a minute, please check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+        </div>
+        
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+          <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm text-center">
             {error}
           </div>
         )}
@@ -114,12 +141,23 @@ export default function Register() {
             "Verify"
           )}
         </Button>
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          Didn't receive the code?{" "}
-          <button onClick={handleResend} className="text-primary font-medium hover:underline">
-            Resend
-          </button>
-        </p>
+        
+        {/* NEW: Modern Cooldown & Expiration UI */}
+        <div className="flex flex-col items-center gap-2 mt-6">
+          <p className="text-center text-sm text-muted-foreground">
+            Didn't receive the code?{" "}
+            <button 
+              onClick={handleResend} 
+              disabled={resendCooldown > 0}
+              className="text-primary font-medium hover:underline disabled:text-gray-400 disabled:no-underline transition-colors"
+            >
+              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+            </button>
+          </p>
+          <p className="text-xs text-amber-600/80 font-medium">
+            Code expires in 15 minutes
+          </p>
+        </div>
       </AuthLayout>
     );
   }
@@ -157,7 +195,7 @@ export default function Register() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm text-center">
           {error}
         </div>
       )}

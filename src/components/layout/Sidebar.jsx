@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, Users, FileText, Wallet,
   GraduationCap, BarChart3, Bell, Settings, MessageSquare,
-  ClipboardCheck, Scale, ChevronLeft, ChevronRight, LogOut, X, CreditCard, PiggyBank, Plug
+  ClipboardCheck, Scale, ChevronLeft, ChevronRight, LogOut, X, CreditCard, PiggyBank
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -60,10 +60,12 @@ const roleNavItems = {
 export default function Sidebar({ role = 'admin', collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const location = useLocation();
   const { t } = useLanguage();
+  
+  // Dynamically choose navigation list based on simulated user role
   const navItems = roleNavItems[role] || roleNavItems.admin;
 
   const handleLogout = () => {
-    base44.auth.logout('/login');
+    base44.auth.logout();
   };
 
   return (

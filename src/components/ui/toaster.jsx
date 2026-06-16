@@ -1,3 +1,4 @@
+// src/components/ui/toaster.jsx
 import { useToast } from "@/components/ui/use-toast";
 import {
   Toast,
@@ -9,7 +10,8 @@ import {
 } from "@/components/ui/toast";
 
 export function Toaster() {
-  const { toasts } = useToast();
+  // FIX 1: We extract 'dismiss' from the hook so the X button knows how to delete the toast
+  const { toasts, dismiss } = useToast();
 
   return (
     <ToastProvider>
@@ -23,11 +25,12 @@ export function Toaster() {
               )}
             </div>
             {action}
-            <ToastClose />
+            {/* FIX 2: We attach the dismiss function specifically to this X button's ID */}
+            <ToastClose onClick={() => dismiss(id)} />
           </Toast>
         );
       })}
       <ToastViewport />
     </ToastProvider>
   );
-} 
+}

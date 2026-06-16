@@ -11,8 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
-import { FileText, ClipboardCheck, Clock, AlertTriangle, Shield } from 'lucide-react';
-import { format } from 'date-fns';
+import { FileText, ClipboardCheck, Clock, Shield } from 'lucide-react';
 
 export default function ReviewerDashboard() {
   const { user } = useCurrentUser();
@@ -41,11 +40,14 @@ export default function ReviewerDashboard() {
   });
 
   const handleSignCOI = async () => {
-    await base44.auth.updateMe({
+    // FIX: Changed 'updateMe' to 'updateProfile' to match our custom backend proxy
+    await base44.auth.updateProfile({
+      userId: user.id,
       coi_signed: true,
       coi_signed_date: new Date().toISOString()
     });
     setShowCOI(false);
+    window.location.reload();
   };
 
   const assignedCount = applications.length;

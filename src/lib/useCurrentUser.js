@@ -1,16 +1,7 @@
-import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+// src/lib/useCurrentUser.js
+import { useAuth } from './AuthContext';
 
 export function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    base44.auth.me()
-      .then(u => setUser(u))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { user, loading, setUser };
+  const { user, isLoadingAuth } = useAuth();
+  return { user, loading: isLoadingAuth };
 }

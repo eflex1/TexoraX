@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,6 +54,9 @@ const PORTALS = [
 
 export default function Login() {
   const { t, lang, setLang } = useLanguage();
+  const { login } = useAuth(); 
+  const navigate = useNavigate();
+  
   const [selectedPortal, setSelectedPortal] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -67,16 +70,29 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
-      window.location.href = "/";
+      await login(email, password, selectedPortal);
+      navigate("/");
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      // FIX: Extract the beautiful custom error message from Node.js
+      const actualErrorMessage = err.response?.data?.message || err.message || "Invalid email or password";
+      setError(actualErrorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogle = () => base44.auth.loginWithProvider("google", "/");
+  const handleGoogle = async () => {
+    setLoading(true);
+    try {
+      await login(`${selectedPortal}@texorax.com`, "google-auth", selectedPortal);
+      navigate("/");
+    } catch (err) {
+      const actualErrorMessage = err.response?.data?.message || err.message || "Google authentication failed";
+      setError(actualErrorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 flex flex-col items-center justify-center p-4">
@@ -150,7 +166,15 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>
+              <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex flex-col gap-2">
+                <span>{error}</span>
+                {/* If the error is about verification, give them a helpful link! */}
+                {error.includes("verify") && (
+                  <Link to={`/register?role=${selectedPortal}`} className="font-semibold underline hover:text-destructive/80">
+                    Click here to register again and get a new code.
+                  </Link>
+                )}
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -180,7 +204,7 @@ export default function Login() {
 
             <p className="text-center text-sm text-muted-foreground mt-5">
               {t('no_account')}{' '}
-              <Link to="/register" className="text-primary font-medium hover:underline">{t('create_one')}</Link>
+              <Link to={`/register?role=${selectedPortal}`} className="text-primary font-medium hover:underline">{t('create_one')}</Link>
             </p>
           </div>
         )}

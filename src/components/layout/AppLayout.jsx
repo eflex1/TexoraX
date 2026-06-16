@@ -7,6 +7,9 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
+// 1. Import our new Smart Gate
+import ProfileSetupModal from '@/components/shared/ProfileSetupModal';
+
 export default function AppLayout() {
   const { user } = useCurrentUser();
   const [collapsed, setCollapsed] = useState(false);
@@ -23,6 +26,9 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* 2. Drop the Smart Gate here! It will now invisibly guard the entire application. */}
+      <ProfileSetupModal />
+
       <Sidebar
         role={role}
         collapsed={collapsed}
