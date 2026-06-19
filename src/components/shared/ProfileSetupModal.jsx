@@ -51,15 +51,13 @@ export default function ProfileSetupModal() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // 1. Intelligence Engine: Check what they already have
   const hasName = !!user?.full_name;
   const hasInterests = !!user?.interests;
 
   useEffect(() => {
-    // 2. Trigger if they are missing ANY required data
     if (user && (!hasName || !hasInterests)) {
       setIsOpen(true);
-      if (hasName) setFullName(user.full_name); // Pre-fill name quietly if they have it
+      if (hasName) setFullName(user.full_name);
     }
   }, [user, hasName, hasInterests]);
 
@@ -100,25 +98,24 @@ export default function ProfileSetupModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
+      {/* MOBILE RESPONSIVE UPDATES HERE */}
       <DialogContent 
-        className="sm:max-w-md" 
+        className="sm:max-w-md w-[95vw] max-h-[90dvh] overflow-y-auto p-5 sm:p-6 rounded-2xl" 
         onPointerDownOutside={(e) => e.preventDefault()} 
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+        <DialogHeader className="text-left sm:text-center">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <UserCircle className="h-5 w-5 text-primary" /> 
-            {/* Dynamic Greeting for Google Users! */}
             {hasName ? `Welcome, ${user.full_name.split(' ')[0]}!` : config.title}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             {hasName ? "You're almost there. " : ""}{config.description}
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6 py-4">
+        <form onSubmit={handleSubmit} className="space-y-6 py-2 sm:py-4">
           
-          {/* 3. Hide Full Name input if Google already gave it to us! */}
           {!hasName && (
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-sm font-semibold">Full Name</Label>
@@ -129,7 +126,7 @@ export default function ProfileSetupModal() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 autoFocus
-                className="h-11"
+                className="h-12 sm:h-11" /* Larger touch target on mobile */
               />
             </div>
           )}
@@ -137,16 +134,16 @@ export default function ProfileSetupModal() {
           <div className="space-y-3">
             <Label className="text-sm font-semibold flex items-center gap-2">
               <ActiveIcon className={cn("h-4 w-4", config.color)} /> 
-              {config.question} (Select all that apply)
+              {config.question} <span className="text-muted-foreground font-normal text-xs">(Select all that apply)</span>
             </Label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 sm:gap-2">
               {config.options.map(tag => (
                 <button
                   key={tag}
                   type="button"
                   onClick={() => toggleTag(tag)}
                   className={cn(
-                    "px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-200",
+                    "px-4 py-2 sm:px-3 sm:py-1.5 text-sm sm:text-xs font-medium rounded-full border transition-all duration-200", /* Better thumb sizing */
                     selectedTags.includes(tag)
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
                       : "bg-muted/30 text-muted-foreground border-border hover:border-primary/50 hover:bg-muted"
@@ -164,10 +161,9 @@ export default function ProfileSetupModal() {
             </div>
           )}
 
-          {/* 4. Disable button if no tags are selected! */}
           <Button 
             type="submit" 
-            className="w-full h-11" 
+            className="w-full h-12" /* Larger touch target on mobile */
             disabled={loading || (!hasName && !fullName.trim()) || selectedTags.length === 0}
           >
             {loading ? (
