@@ -41,11 +41,10 @@ export const base44 = {
     verifyOtp: authService.verifyOtp, 
     resendOtp: authService.resendOtp,
     setToken: (token) => localStorage.setItem('texorax_token', token), 
-    resetPasswordRequest: async () => ({}),
-    resetPassword: async () => ({}),
-    
-    // FIX: Wire the profile updates directly to our real Node.js route!
-    updateProfile: authService.updateProfile
+    resetPasswordRequest: authService.resetPasswordRequest,
+    resetPassword: authService.resetPassword,
+    updateProfile: authService.updateProfile,
+    changePassword: authService.changePassword
   },
   entities: dummyEntities
 };

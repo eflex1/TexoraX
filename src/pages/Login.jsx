@@ -4,10 +4,12 @@ import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, Loader2, Building2, ClipboardCheck, Wallet, UserCircle, ChevronLeft } from "lucide-react";
+import { Mail, Lock, Loader2, Building2, ClipboardCheck, Wallet, UserCircle, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import GoogleIcon from "@/components/GoogleIcon";
 import { useLanguage, LANGUAGES } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
+import { useGoogleLogin } from '@react-oauth/google';
+import { apiClient } from '@/api/apiClient';
 
 const PORTALS = [
   {
@@ -62,6 +64,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // NEW: State for the password visibility toggle
+  const [showPassword, setShowPassword] = useState(false);
 
   const portal = PORTALS.find(p => p.role === selectedPortal);
 
@@ -73,7 +78,6 @@ export default function Login() {
       await login(email, password, selectedPortal);
       navigate("/");
     } catch (err) {
-      // FIX: Extract the beautiful custom error message from Node.js
       const actualErrorMessage = err.response?.data?.message || err.message || "Invalid email or password";
       setError(actualErrorMessage);
     } finally {
@@ -81,22 +85,42 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    try {
-      await login(`${selectedPortal}@texorax.com`, "google-auth", selectedPortal);
-      navigate("/");
-    } catch (err) {
-      const actualErrorMessage = err.response?.data?.message || err.message || "Google authentication failed";
-      setError(actualErrorMessage);
-    } finally {
-      setLoading(false);
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await apiClient.post('/auth/google-login', {
+          token: tokenResponse.access_token,
+          role: selectedPortal
+        });
+
+        localStorage.setItem('texorax_token', response.data.access_token);
+        localStorage.setItem('texorax_role', response.data.user.role);
+        localStorage.setItem('texorax_user_id', response.data.user.id.toString());
+        localStorage.setItem('texorax_email', response.data.user.email);
+        localStorage.setItem('texorax_coi_signed', response.data.user.coi_signed?.toString() || 'false');
+        localStorage.setItem('texorax_interests', response.data.user.interests || '');
+        
+        if (response.data.user.full_name) {
+          localStorage.setItem('texorax_user_name', response.data.user.full_name);
+        }
+
+        window.location.href = "/";
+      } catch (err) {
+        const actualErrorMessage = err.response?.data?.message || "Google sign-in failed on the server.";
+        setError(actualErrorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError('Google popup authentication failed.');
     }
-  };
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 flex flex-col items-center justify-center p-4">
-      {/* Language picker */}
       <div className="absolute top-4 right-4 flex items-center gap-1">
         {LANGUAGES.map(l => (
           <button key={l.code} onClick={() => setLang(l.code)}
@@ -107,11 +131,10 @@ export default function Login() {
       </div>
 
       <div className="w-full max-w-lg">
-        {/* Logo */}
         <div className="text-center mb-8">
           <img
             src="https://media.base44.com/images/public/6a1461e7a37eb199f332e347/f5a498f57_IMG_9423.png"
-            alt="NexoraX"
+            alt="TexoraX"
             className="h-10 mx-auto object-contain mb-3"
           />
           <h1 className="text-2xl font-bold text-gray-900">{t('welcome_back')}</h1>
@@ -119,7 +142,6 @@ export default function Login() {
         </div>
 
         {!selectedPortal ? (
-          /* Portal selector */
           <div className="grid grid-cols-2 gap-3">
             {PORTALS.map(p => {
               const Icon = p.icon;
@@ -138,7 +160,6 @@ export default function Login() {
             })}
           </div>
         ) : (
-          /* Login form */
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
             <button onClick={() => { setSelectedPortal(null); setError(''); }}
               className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 mb-6 transition-colors">
@@ -153,7 +174,7 @@ export default function Login() {
               </div>
             </div>
 
-            <Button variant="outline" className="w-full h-11 text-sm font-medium mb-5" onClick={handleGoogle}>
+            <Button variant="outline" className="w-full h-11 text-sm font-medium mb-5" onClick={() => handleGoogleLogin()} disabled={loading}>
               <GoogleIcon className="w-4 h-4 mr-2" />
               {t('continue_with_google')}
             </Button>
@@ -168,7 +189,6 @@ export default function Login() {
             {error && (
               <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex flex-col gap-2">
                 <span>{error}</span>
-                {/* If the error is about verification, give them a helpful link! */}
                 {error.includes("verify") && (
                   <Link to={`/register?role=${selectedPortal}`} className="font-semibold underline hover:text-destructive/80">
                     Click here to register again and get a new code.
@@ -191,12 +211,30 @@ export default function Login() {
                   <Label htmlFor="password">{t('password')}</Label>
                   <Link to="/forgot-password" className="text-xs text-primary hover:underline">{t('forgot_password')}</Link>
                 </div>
+                
+                {/* NEW: Upgraded Password Input with Show/Hide Toggle */}
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input id="password" type="password" autoComplete="current-password" placeholder="••••••••"
-                    value={password} onChange={e => setPassword(e.target.value)} className="pl-10 h-11" required />
+                  <Input 
+                    id="password" 
+                    type={showPassword ? "text" : "password"} 
+                    autoComplete="current-password" 
+                    placeholder="••••••••"
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    className="pl-10 pr-10 h-11" 
+                    required 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)} 
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
+              
               <Button type="submit" className="w-full h-11 font-medium" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('logging_in')}</> : t('log_in')}
               </Button>

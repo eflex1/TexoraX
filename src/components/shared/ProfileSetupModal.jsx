@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Loader2, UserCircle, Sparkles, Briefcase, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// 1. The Intelligence Dictionary: Different tags for different roles
 const ROLE_CONFIG = {
   applicant: {
     title: "Complete Your Profile",
@@ -52,27 +51,30 @@ export default function ProfileSetupModal() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  useEffect(() => {
-    if (user && !user.full_name) {
-      setIsOpen(true);
-    }
-  }, [user]);
+  // 1. Intelligence Engine: Check what they already have
+  const hasName = !!user?.full_name;
+  const hasInterests = !!user?.interests;
 
-  // Fallback to 'applicant' if the role is missing for some reason
+  useEffect(() => {
+    // 2. Trigger if they are missing ANY required data
+    if (user && (!hasName || !hasInterests)) {
+      setIsOpen(true);
+      if (hasName) setFullName(user.full_name); // Pre-fill name quietly if they have it
+    }
+  }, [user, hasName, hasInterests]);
+
   const config = ROLE_CONFIG[user?.role] || ROLE_CONFIG.applicant;
   const ActiveIcon = config.icon;
 
   const toggleTag = (tag) => {
     setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag) 
-        : [...prev, tag]
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!fullName.trim()) return;
+    if (!hasName && !fullName.trim()) return;
     
     setLoading(true);
     setErrorMsg('');
@@ -83,7 +85,7 @@ export default function ProfileSetupModal() {
       await base44.auth.updateProfile({
         userId: user.id,
         full_name: fullName,
-        interests: interestsString // Saving to our generic DB column!
+        interests: interestsString
       });
       
       setIsOpen(false);
@@ -105,26 +107,32 @@ export default function ProfileSetupModal() {
       >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserCircle className="h-5 w-5 text-primary" /> {config.title}
+            <UserCircle className="h-5 w-5 text-primary" /> 
+            {/* Dynamic Greeting for Google Users! */}
+            {hasName ? `Welcome, ${user.full_name.split(' ')[0]}!` : config.title}
           </DialogTitle>
           <DialogDescription>
-            {config.description}
+            {hasName ? "You're almost there. " : ""}{config.description}
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-sm font-semibold">Full Name</Label>
-            <Input
-              id="fullName"
-              placeholder="e.g. Jane Doe"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              autoFocus
-              className="h-11"
-            />
-          </div>
+          
+          {/* 3. Hide Full Name input if Google already gave it to us! */}
+          {!hasName && (
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-sm font-semibold">Full Name</Label>
+              <Input
+                id="fullName"
+                placeholder="e.g. Jane Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                autoFocus
+                className="h-11"
+              />
+            </div>
+          )}
 
           <div className="space-y-3">
             <Label className="text-sm font-semibold flex items-center gap-2">
@@ -156,7 +164,12 @@ export default function ProfileSetupModal() {
             </div>
           )}
 
-          <Button type="submit" className="w-full h-11" disabled={loading || !fullName.trim()}>
+          {/* 4. Disable button if no tags are selected! */}
+          <Button 
+            type="submit" 
+            className="w-full h-11" 
+            disabled={loading || (!hasName && !fullName.trim()) || selectedTags.length === 0}
+          >
             {loading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving Profile...</>
             ) : (
